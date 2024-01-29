@@ -14,7 +14,17 @@ mqtt_topic_humidity = "home/gpio/sensor/humidity"
 
 # Connect to MQTT Broker
 client = mqtt.Client()
-client.connect(mqtt_broker, mqtt_port, 60)
+client.username_pw_set("username", "password")  # Replace with your MQTT credentials
+
+while True:
+    try:
+        client.connect(mqtt_broker, mqtt_port, 60)
+        client.loop_start()  # Start the network loop
+        time.sleep(1)  # Wait a bit for the client to establish connection
+        break  # Successful connection, exit the loop
+    except:
+        print("Connection to MQTT broker failed, retrying...")
+        time.sleep(5)  # Wait for 5 seconds before retrying
 
 try:
     while True:
@@ -33,4 +43,5 @@ try:
 except KeyboardInterrupt:
     print("Stopping the script")
 
+client.loop_stop()  # Stop the network loop
 client.disconnect()
